@@ -61,21 +61,45 @@
 
         <h2>Current Items</h2>
         <ul>
-            @if(empty($todos))
-            <li class="empty-message">Your To-Do list is empty!</li>
-            @else
-            <li>Example Task 1 (Static)</li>
-            <li>Example Task 2 (Static)</li>
-            @endif
-        </ul>
+            @forelse ($todos as $todo)
+            <li>
 
+                {{ $todo }}
+            </li> {{-- Display each todo description --}}
+            @empty
+            <li class="empty-message">Your To-Do list is empty! Add something below.</li>
+            @endforelse
+        </ul>
 
         <div class="add-form">
             <h2>Add New To-Do</h2>
-            <form>
-                <input type="text" name="description" placeholder="Enter new task description..." required>
+            <form method="POST" action="{{ route('todos.store') }}">
+                @csrf
+                <input type="text" name="description" placeholder="Enter new task description..." required
+                    value="{{ old('description') }}">
                 <button type="submit">Add Task</button>
             </form>
+
+            @if ($errors->any())
+            <div style="color: #dc3545; margin-top: 10px; font-size: 0.9em;">
+                <strong>Whoops! Something went wrong.</strong>
+                <ul style="margin-top: 5px;">
+                    @foreach ($errors->all() as $error)
+                    <li>
+
+                        {{ $error }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div style="color: #28a745; margin-top: 10px; font-size: 0.9em;">
+
+                {{ session('success') }}
+            </div>
+            @endif
         </div>
 
     </body>
